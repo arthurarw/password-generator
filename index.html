@@ -31,15 +31,15 @@
             </div>
             <div class="actions">
                 <button id="copyPassword">
-                    <img src="assets/img/copy.svg" alt="Copiar senha" width="42">
+                    <img src="assets/img/copy.svg" alt="Copiar senha" width="42" title="Copiar senha">
                 </button>
                 <button id="renewPassword">
-                    <img src="assets/img/renew.svg" alt="Gerar nova senha" width="42">
+                    <img src="assets/img/renew.svg" alt="Gerar nova senha" width="42" title="Gerar nova senha">
                 </button>
             </div>
         </div>
         <div class="security-indicator">
-            <div id="security-indicator-bar" class="bar" style="width: 90%"></div>
+            <div id="security-indicator-bar" class="bar"></div>
         </div>
     </section>
 
@@ -78,10 +78,28 @@
 <script>
     let passwordLength = 16;
     const inputEl = document.querySelector("#password");
+    const upperCaseCheckEl = document.querySelector("#uppercase-check");
+    const numberCheckEl = document.querySelector("#number-check");
+    const symbolCheckEl = document.querySelector("#symbol-check");
+    const indicatorBarEl = document.querySelector("#security-indicator-bar");
 
     function generatePassword() {
-        const chars =
-            "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789?!@&*()[]";
+        let chars = "abcdefghjkmnpqrstuvwxyz";
+        const upperCaseChars = chars.toUpperCase();
+        const numberChars = "123456789";
+        const symbolChars = "?!@&*()[]";
+
+        if (upperCaseCheckEl.checked) {
+            chars += upperCaseChars;
+        }
+
+        if (numberCheckEl.checked) {
+            chars += numberChars;
+        }
+
+        if (symbolCheckEl.checked) {
+            chars += symbolChars;
+        }
 
         let password = "";
         for (let i = 0; i < passwordLength; i++) {
@@ -90,6 +108,51 @@
         }
 
         inputEl.value = password;
+        calculateQuality();
+        calculateFontSize();
+    }
+
+    function calculateQuality() {
+        const weightLength = (passwordLength / 64) * 25;
+        const weightUppercase = upperCaseCheckEl.checked ? 15 : 0;
+        const weightNumber = numberCheckEl.checked ? 25 : 0;
+        const weightSymbol = symbolCheckEl.checked ? 35 : 0;
+
+        let percent = Math.round(weightLength + weightUppercase + weightNumber + weightSymbol);
+
+        if (percent > 69) {
+            indicatorBarEl.classList.remove("critical", "warning");
+            indicatorBarEl.classList.add("safe");
+        } else if (percent > 40) {
+            indicatorBarEl.classList.remove("critical", "safe");
+            indicatorBarEl.classList.add("warning");
+        } else {
+            indicatorBarEl.classList.remove("safe", "warning");
+            indicatorBarEl.classList.add("critical");
+        }
+
+        if (percent >= 100) {
+            indicatorBarEl.classList.add("completed");
+        } else {
+            indicatorBarEl.classList.remove("completed");
+        }
+
+        indicatorBarEl.style.width = `${percent}%`;
+    }
+
+    function calculateFontSize() {
+        if (passwordLength > 45) {
+            inputEl.classList.remove("font-xs", "font-sm");
+            inputEl.classList.add("font-xxs");
+        } else if (passwordLength > 32) {
+            inputEl.classList.remove("font-xxs", "font-sm");
+            inputEl.classList.add("font-xs");
+        } else if (passwordLength > 22) {
+            inputEl.classList.remove("font-xxs", "font-xs");
+            inputEl.classList.add("font-sm");
+        } else {
+            inputEl.classList.remove("font-xxs", "font-xs", "font-sm");
+        }
     }
 
     function copyPassword() {
@@ -100,11 +163,17 @@
     const passwordLengthEl = document.querySelector("#password-length");
     passwordLengthEl.addEventListener("input", function () {
         passwordLength = passwordLengthEl.value;
+        document.querySelector("#password-length-text").innerText = passwordLength;
         generatePassword();
     });
 
+    upperCaseCheckEl.addEventListener("click", generatePassword);
+    numberCheckEl.addEventListener("click", generatePassword);
+    symbolCheckEl.addEventListener("click", generatePassword);
+
     document.querySelector("#copyPassword").addEventListener("click", copyPassword);
     document.querySelector("#copyPassword2").addEventListener("click", copyPassword);
+    document.querySelector("#renewPassword").addEventListener("click", generatePassword);
 
     generatePassword();
 </script>
