@@ -77,11 +77,11 @@
 </main>
 <script>
     let passwordLength = 16;
-    const inputEl = document.querySelector("#password");
-    const upperCaseCheckEl = document.querySelector("#uppercase-check");
-    const numberCheckEl = document.querySelector("#number-check");
-    const symbolCheckEl = document.querySelector("#symbol-check");
-    const indicatorBarEl = document.querySelector("#security-indicator-bar");
+    const inputEl = document.getElementById("password");
+    const upperCaseCheckEl = document.getElementById("uppercase-check");
+    const numberCheckEl = document.getElementById("number-check");
+    const symbolCheckEl = document.getElementById("symbol-check");
+    const indicatorBarEl = document.getElementById("security-indicator-bar");
 
     function generatePassword() {
         let chars = "abcdefghjkmnpqrstuvwxyz";
@@ -160,10 +160,10 @@
         alert('Senha copiada!');
     }
 
-    const passwordLengthEl = document.querySelector("#password-length");
+    const passwordLengthEl = document.getElementById("password-length");
     passwordLengthEl.addEventListener("input", function () {
         passwordLength = passwordLengthEl.value;
-        document.querySelector("#password-length-text").innerText = passwordLength;
+        document.getElementById("password-length-text").innerText = passwordLength;
         generatePassword();
     });
 
@@ -171,9 +171,9 @@
     numberCheckEl.addEventListener("click", generatePassword);
     symbolCheckEl.addEventListener("click", generatePassword);
 
-    document.querySelector("#copyPassword").addEventListener("click", copyPassword);
-    document.querySelector("#copyPassword2").addEventListener("click", copyPassword);
-    document.querySelector("#renewPassword").addEventListener("click", generatePassword);
+    document.getElementById("copyPassword").addEventListener("click", copyPassword);
+    document.getElementById("copyPassword2").addEventListener("click", copyPassword);
+    document.getElementById("renewPassword").addEventListener("click", generatePassword);
 
     generatePassword();
 </script>
